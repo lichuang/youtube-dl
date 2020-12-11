@@ -1651,7 +1651,7 @@ class YoutubeDL(object):
         if download or get_func:
             new_info_list = []
             if len(formats_to_download) > 1:
-                self.to_screen('[info] %s: downloading video in %s formats' % (info_dict['id'], len(formats_to_download)))
+                self.to_screen('[info] %s: downloading video in %s formats' % (info_dict['id'], len(formats_to_download)))            
             for format in formats_to_download:
                 new_info = dict(info_dict)
                 new_info.update(format)
@@ -1659,7 +1659,7 @@ class YoutubeDL(object):
 
             # get format function return all formats info
             if get_func:
-                get_func(new_info_list)
+                get_func(info_dict)
                 return info_dict
 
             if download:
@@ -1945,7 +1945,7 @@ class YoutubeDL(object):
                         info_dict['__postprocessors'] = postprocessors
                         info_dict['__files_to_merge'] = downloaded
                 else:
-                    # Just a single file
+                    # Just a single file                   
                     success = dl(filename, info_dict)
             except (compat_urllib_error.URLError, compat_http_client.HTTPException, socket.error) as err:
                 self.report_error('unable to download video data: %s' % error_to_compat_str(err))
