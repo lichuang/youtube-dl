@@ -277,6 +277,7 @@ class YoutubeDL(object):
                        [sleep_interval; max_sleep_interval].
     listformats:       Print an overview of available video formats and exit.
     getformats:        Get all available video formats and exit.
+    down_format_id:    Down video format and exit.
     list_thumbnails:   Print a table of all thumbnails and exit.
     match_filter:      A function that gets called with the info_dict of
                        every video.
@@ -1595,6 +1596,18 @@ class YoutubeDL(object):
         if '__x_forwarded_for_ip' in info_dict:
             del info_dict['__x_forwarded_for_ip']
 
+        # filter request format id
+        down_format_id = self.params.get('down_format_id')
+        if down_format_id:
+            formats = list(filter(lambda x: int(x["format_id"]) == int(down_format_id), formats))
+            if not formats:
+                raise ExtractorError('requested format not available',
+                                    expected=True)        
+            info_dict["formats"] = formats
+            update_info_dict = self.params.get('update_info_dict')
+            if update_info_dict:
+                update_info_dict(info_dict)
+
         # TODO Central sorting goes here
 
         if formats[0] is not info_dict:
@@ -1647,12 +1660,12 @@ class YoutubeDL(object):
                                  expected=True)
 
         get_func = self.params.get('getformats')
-
-        if download or get_func:
+        
+        if download or get_func:            
             new_info_list = []
             if len(formats_to_download) > 1:
-                self.to_screen('[info] %s: downloading video in %s formats' % (info_dict['id'], len(formats_to_download)))            
-            for format in formats_to_download:
+                self.to_screen('[info] %s: downloading video in %s formats' % (info_dict['id'], len(formats_to_download))) 
+            for format in formats_to_download:                              
                 new_info = dict(info_dict)
                 new_info.update(format)
                 new_info_list.append(new_info)
@@ -1664,8 +1677,9 @@ class YoutubeDL(object):
 
             if download:
                 for new_info in new_info_list:                
-                    self.process_info(new_info)                                
-        # We update the info dict with the best quality format (backwards compatibility)
+                    self.process_info(new_info)                 
+
+        # We update the info dict with the best quality format (backwards compatibility)       
         info_dict.update(formats_to_download[-1])
         return info_dict
 
