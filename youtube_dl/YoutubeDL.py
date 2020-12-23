@@ -1599,7 +1599,7 @@ class YoutubeDL(object):
         # filter request format id
         down_format_id = self.params.get('down_format_id')
         if down_format_id:
-            formats = list(filter(lambda x: int(x["format_id"]) == int(down_format_id), formats))
+            formats = list(filter(lambda x: str(x["format_id"]) == str(down_format_id), formats))
             if not formats:
                 raise ExtractorError('requested format not available',
                                     expected=True)        
